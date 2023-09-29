@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+    <!-- ... (your existing head content) ... -->
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>GeoLocator</title>
@@ -21,15 +22,25 @@
             margin-top: 3px;
         } */
 
+        /* Initially hide the location link and share button */
+        #locationLink, #shareButton {
+            display: none;
+        }
+
     </style>
 </head>
 <body class="bg-gradient-to-b from-[#6d28d9] to-pink-500 h-screen ">
     <div class="flex flex-col bg-white mt-10 rounded hehe">
-    <h1 class="text-center text-4xl my-5">Welcome to GeoLocator</h1>
+    <h1 class="text-center text-2xl my-5">Welcome to GeoLocator</h1>
+    <p class="text-center text-base my-2">Share Your Locations With Your Friends..!</p>
     <button onclick="getLocation()" class="buttoncss rounded hover:bg-pink-600 active:bg-violet-700 focus:outline-none focus:ring focus:ring-violet-300">Get Location</button>
     <p id="location" class="text-center text-2xl my-5"></p>
-    <a id="locationLink" class="atagcss buttoncss rounded hover:bg-pink-600 active:bg-violet-700 focus:outline-none focus:ring focus:ring-violet-300" href="" target="_blank"></a>
-    <p class="text-center text-xs my-5">Do Not Store any type of data of user to Maintain their Privacy</p>
+    <a id="locationLink" class="atagcss buttoncss my-1 rounded hover:bg-pink-600 active:bg-violet-700 focus:outline-none focus:ring focus:ring-violet-300" href="" target="_blank"></a>
+    
+    <!-- Add Share Location button -->
+    <button id="shareButton" class="buttoncss my-1 rounded hover:bg-pink-600 active:bg-violet-700 focus:outline-none focus:ring focus:ring-violet-300">Share Location</button>
+    
+    <p class="text-center text-xs my-5">Do Not Store any type of data of the user to Maintain their Privacy</p>
     </div>
     <script>
         function getLocation() {
@@ -39,14 +50,41 @@
             document.getElementById('location').innerHTML = 'Geolocation is not supported by this browser.';
           }
         }
+
         function showPosition(position) {
           const locationElement = document.getElementById('location');
-          const locationLink=document.getElementById('locationLink')
+          const locationLink = document.getElementById('locationLink');
+          const shareButton = document.getElementById('shareButton');
           locationElement.innerHTML = `Latitude: ${position.coords.latitude}<br>Longitude: ${position.coords.longitude}`;
+          
+          // Create the Google Maps URL
           var googleMapsUrl = "https://www.google.com/maps?q=" + position.coords.latitude + "," + position.coords.longitude;
-          locationLink.innerHTML="Open Maps";
+          
+          // Set the location link and make it visible
+          locationLink.innerHTML = "Open Maps";
           locationLink.setAttribute("href", googleMapsUrl);
+          locationLink.style.display = "block";
+          
+          // Enable the Share Location button
+          shareButton.style.display = "block";
+          
+          // Add click event to the Share Location button
+          shareButton.addEventListener("click", function() {
+            if (navigator.share) {
+              navigator.share({
+                title: "My Location",
+                text: `Latitude: ${position.coords.latitude}, Longitude: ${position.coords.longitude}`,
+                url: googleMapsUrl
+              })
+              .then(() => console.log("Location shared successfully"))
+              .catch((error) => console.error("Error sharing location: ", error));
+            } else {
+              // Web Share API not supported
+              alert("Sharing is not supported in this browser.");
+            }
+          });
         }
       </script>
 </body>
 </html>
+
